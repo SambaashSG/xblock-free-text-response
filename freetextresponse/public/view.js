@@ -109,7 +109,7 @@ function FreeTextResponseView(runtime, element) {
             type: 'POST',
             data: JSON.stringify({
                 // eslint-disable-next-line camelcase
-                student_answer: $element.find('.student_answer').val(),
+                student_answer: $element.find('#student_answer').val(),
 				student_comments: $element.find('#student_comments').val(),
             }),
             success: function buttonSaveOnSuccess(response) {
