@@ -101,38 +101,6 @@ function FreeTextResponseView(runtime, element) {
 	
     buttonSubmit.on('click', function () {
 		buttonSubmit.text(buttonSubmit[0].dataset.checking);
-        runtime.notify('save', {
-            message: 'Saving...',
-            state: 'start',
-        });
-        $.ajax(urlSave, {
-            type: 'POST',
-            data: JSON.stringify({
-                // eslint-disable-next-line camelcase
-                student_answer: $element.find('#student_answer').val(),
-				student_comments: $element.find('#student_comments').val(),
-            }),
-            success: function buttonSaveOnSuccess(response) {
-                buttonSubmit.addClass(response.nodisplay_class);
-                usedAttemptsFeedback.text(response.used_attempts_feedback);
-                problemProgress.text(response.problem_progress);
-                submissionReceivedMessage.text(response.submitted_message);
-                userAlertMessage.text(response.user_alert);
-				
-                $xblocksContainer.data(cachedAnswerId, $element.find('#student_answer').val());
-                $xblocksContainer.data(cachedCommentsId, $element.find('#student_comments').val());
-                $xblocksContainer.data(problemProgressId, response.problem_progress);
-                $xblocksContainer.data(usedAttemptsFeedbackId, response.used_attempts_feedback);
-
-                runtime.notify('save', {
-                    state: 'end',
-                });
-            },
-            error: function buttonSaveOnError() {
-                runtime.notify('error', {});
-            },
-        });
-		
         runtime.notify('submit', {
             message: 'Submitting...',
             state: 'start',

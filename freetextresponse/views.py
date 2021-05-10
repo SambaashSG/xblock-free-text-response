@@ -244,28 +244,6 @@ class FreeTextResponseViewMixin(
         }
         return result
 
-    @XBlock.json_handler
-    def save_reponse(self, data, suffix=''):
-        # pylint: disable=unused-argument
-        """
-        Processes the user's save
-        """
-        # Fails if the UI submit/save buttons were shut
-        # down on the previous sumbisson
-        if self.max_attempts == 0 or self.count_attempts < self.max_attempts:
-            self.student_answer = data['student_answer']
-            self.student_comments = data['student_comments']
-        result = {
-            'status': 'success',
-            'problem_progress': self._get_problem_progress(),
-            'used_attempts_feedback': self._get_used_attempts_feedback(),
-            'nodisplay_class': self._get_nodisplay_class(),
-            'submitted_message': '',
-            'user_alert': self.saved_message,
-            'visibility_class': self._get_indicator_visibility_class(),
-        }
-        return result
-
     def _get_invalid_word_count_message(self, ignore_attempts=False):
         """
         Returns the invalid word count message
@@ -276,10 +254,11 @@ class FreeTextResponseViewMixin(
                 (not self._word_count_valid())
         ):
             word_count_message = self._get_word_count_message()
+            description = self.description
             result = self.ugettext(
-                "Invalid Word Count. {word_count_message}"
+                "{description} is required!"
             ).format(
-                word_count_message=word_count_message,
+                description = description,
             )
         return result
 
@@ -306,8 +285,6 @@ class FreeTextResponseViewMixin(
         """
         Determine if a user may submit a response
         """
-        if self.is_past_due():
-            return False
         if self.max_attempts == 0:
             return True
         if self.count_attempts < self.max_attempts:
