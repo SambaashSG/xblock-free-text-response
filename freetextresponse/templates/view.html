@@ -3,10 +3,17 @@
     <h2 class="problem-header">{{ display_name }}</h2>
     <div class="problem-progress">{{ problem_progress }}</div>
     <p>{{ prompt|safe }}</p>
-    <div class="word-count-message">{{ word_count_message }}</div>
+    <div class="word-count-message" id="description">{{ description }}</div>
     <div class="capa_inputtype textline">
         <div class="user_input {{ indicator_class }}">
-            <textarea class="student_answer" rows="20">{{ student_answer }}</textarea>
+            <textarea class="student_answer"  id="student_answer" rows="20">{{ student_answer }}</textarea>
+            <span class="status {{ visibility_class }}" aria-describedby="student_answer"></span>
+        </div>
+    </div>
+	<div class="word-count-message">{{ comments }}</div>
+    <div class="capa_inputtype textline">
+        <div class="user_input {{ indicator_class }}">
+            <textarea class="student_answer" id="student_comments" rows="20">{{ student_comments }}</textarea>
             <span class="status {{ visibility_class }}" aria-describedby="student_answer"></span>
         </div>
     </div>
@@ -17,14 +24,9 @@
     {% endif %}
     <div class="capa_alert submission-received">{{ submitted_message }}</div>
     <div class="action">
-        {% if not is_past_due %}
             <button class="check Submit {{ nodisplay_class }}" data-checking="{% trans "Checking..." %}" data-value={% trans "Submit" %}>
                 {% trans "Submit" %}
             </button>
-            <button class="save {{ nodisplay_class }}" data-checking="{% trans "Checking..." %}" data-value={% trans "Save" %}>
-                {% trans "Save" %}
-            </button>
-        {% endif %}
         <div class="used-attempts-feedback" aria-live="polite">{{ used_attempts_feedback }}</div>
     </div>
     <div class="capa_alert user_alert">{{ user_alert }}</div>
@@ -39,6 +41,7 @@
             <ul class="response-list" data-noresponse="{% trans "No responses to show at this time" %}">
                 {% for response in other_responses %}
                     <li class="other-student-responses">{{ response.answer }}</li>
+					<li class="other-student-responses">{{ response.comments }}</li>
                 {% empty %}
                     <li class="no-response">{% trans "No responses to show at this time" %}</li>
                 {% endfor %}

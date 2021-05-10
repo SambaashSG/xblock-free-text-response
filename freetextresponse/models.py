@@ -24,6 +24,8 @@ class FreeTextResponseModelMixin(object):
 
     editable_fields = [
         'display_name',
+        'description',
+        'comments',
         'prompt',
         'weight',
         'max_attempts',
@@ -67,6 +69,22 @@ class FreeTextResponseModelMixin(object):
             'This is the title for this question type'
         ),
         default='Free-text Response',
+        scope=Scope.settings,
+    )
+    description = String(
+        display_name=_('Description'),
+        help=_(
+            'This is the title for this question type'
+        ),
+        default='Description',
+        scope=Scope.settings,
+    )
+    comments = String(
+        display_name=_('Comments'),
+        help=_(
+            'This is the title for this question type'
+        ),
+        default='Comments',
         scope=Scope.settings,
     )
     fullcredit_keyphrases = List(
@@ -172,6 +190,10 @@ class FreeTextResponseModelMixin(object):
         default='',
         scope=Scope.user_state,
     )
+    student_comments= String(
+        default='',
+        scope=Scope.user_state,
+    )
     has_score = True
     show_in_read_only_mode = True
 
@@ -194,6 +216,7 @@ class FreeTextResponseModelMixin(object):
         self.displayable_answers.append({
             'student_id': student_id,
             'answer': self.student_answer,
+            'comments': self.student_comments,
         })
 
         # Want to store extra response so student can still see

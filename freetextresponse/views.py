@@ -37,12 +37,15 @@ class FreeTextResponseViewMixin(
         context = context or {}
         context = dict(context)
         context.update({
+            'comments': self.comments,
             'display_name': self.display_name,
+            'description': self.description,
             'indicator_class': self._get_indicator_class(),
             'nodisplay_class': self._get_nodisplay_class(),
             'problem_progress': self._get_problem_progress(),
             'prompt': self.prompt,
             'student_answer': self.student_answer,
+            'student_comments': self.student_comments,
             'is_past_due': self.is_past_due(),
             'used_attempts_feedback': self._get_used_attempts_feedback(),
             'visibility_class': self._get_indicator_visibility_class(),
@@ -217,6 +220,7 @@ class FreeTextResponseViewMixin(
         # down on the previous sumbisson
         if self._can_submit():
             self.student_answer = data['student_answer']
+            self.student_comments = data['student_comments']
             # Counting the attempts and publishing a score
             # even if word count is invalid.
             self.count_attempts += 1
@@ -250,6 +254,7 @@ class FreeTextResponseViewMixin(
         # down on the previous sumbisson
         if self.max_attempts == 0 or self.count_attempts < self.max_attempts:
             self.student_answer = data['student_answer']
+            self.student_comments = data['student_comments']
         result = {
             'status': 'success',
             'problem_progress': self._get_problem_progress(),

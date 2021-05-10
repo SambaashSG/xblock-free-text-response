@@ -16,23 +16,26 @@ function FreeTextResponseView(runtime, element) {
     var buttonHideTextHide = $('.hide', buttonHide);
     var buttonHideTextShow = $('.show', buttonHide);
     var buttonSubmit = $element.find('.check.Submit');
-    var buttonSave = $element.find('.save');
     var usedAttemptsFeedback = $element.find('.action .used-attempts-feedback');
     var problemProgress = $element.find('.problem-progress');
     var submissionReceivedMessage = $element.find('.submission-received');
     var userAlertMessage = $element.find('.user_alert');
-    var textareaStudentAnswer = $element.find('.student_answer');
-    var textareaParent = textareaStudentAnswer.parent();
+    var textareaStudentAnswer = $element.find('#student_answer');
+    var textareaSAParent = textareaStudentAnswer.parent();
+	var textareaStudentComments = $element.find('#student_comments');
+    var textareaSCParent = textareaStudentComments.parent();
     var responseList = $element.find('.response-list');
     var url = runtime.handlerUrl(element, 'submit');
     var urlSave = runtime.handlerUrl(element, 'save_reponse');
     var xblockId = $element.attr('data-usage-id');
     var cachedAnswerId = xblockId + '_cached_answer';
+	var cachedCommentsId = xblockId + '_cached_comments';
     var problemProgressId = xblockId + '_problem_progress';
     var usedAttemptsFeedbackId = xblockId + '_used_attempts_feedback';
 
     if (typeof $xblocksContainer.data(cachedAnswerId) !== 'undefined') {
         textareaStudentAnswer.text($xblocksContainer.data(cachedAnswerId));
+		textareaSCParent.text($xblocksContainer.data(cachedCommentsId));
         problemProgress.text($xblocksContainer.data(problemProgressId));
         usedAttemptsFeedback.text($xblocksContainer.data(usedAttemptsFeedbackId));
     }
@@ -49,10 +52,15 @@ function FreeTextResponseView(runtime, element) {
      * @returns {undefined} nothing
      */
     function setClassForTextAreaParent(newClass) {
-        textareaParent.removeClass('correct');
-        textareaParent.removeClass('incorrect');
-        textareaParent.removeClass('unanswered');
-        textareaParent.addClass(newClass);
+        textareaSAParent.removeClass('correct');
+        textareaSAParent.removeClass('incorrect');
+        textareaSAParent.removeClass('unanswered');
+        textareaSAParent.addClass(newClass);
+        
+        textareaSCParent.removeClass('correct');
+        textareaSCParent.removeClass('incorrect');
+        textareaSCParent.removeClass('unanswered');
+        textareaSCParent.addClass(newClass);
     }
 
     /**
@@ -90,18 +98,53 @@ function FreeTextResponseView(runtime, element) {
         buttonHideTextHide.toggle();
         buttonHideTextShow.toggle();
     });
-
+	
     buttonSubmit.on('click', function () {
-        buttonSubmit.text(buttonSubmit[0].dataset.checking);
-        runtime.notify('submit', {
-            message: 'Submitting...',
+		buttonSubmit.text(buttonSubmit[0].dataset.checking);
+        runtime.notify('save', {
+            message: 'Saving...',
             state: 'start',
         });
-        $.ajax(url, {
+        $.ajax(urlSave, {
             type: 'POST',
             data: JSON.stringify({
                 // eslint-disable-next-line camelcase
                 student_answer: $element.find('.student_answer').val(),
+				student_comments: $element.find('#student_comments').val(),
+            }),
+            success: function buttonSaveOnSuccess(response) {
+                buttonSubmit.addClass(response.nodisplay_class);
+                usedAttemptsFeedback.text(response.used_attempts_feedback);
+                problemProgress.text(response.problem_progress);
+                submissionReceivedMessage.text(response.submitted_message);
+                userAlertMessage.text(response.user_alert);
+				
+                $xblocksContainer.data(cachedAnswerId, $element.find('#student_answer').val());
+                $xblocksContainer.data(cachedCommentsId, $element.find('#student_comments').val());
+                $xblocksContainer.data(problemProgressId, response.problem_progress);
+                $xblocksContainer.data(usedAttemptsFeedbackId, response.used_attempts_feedback);
+
+                runtime.notify('save', {
+                    state: 'end',
+                });
+            },
+            error: function buttonSaveOnError() {
+                runtime.notify('error', {});
+            },
+        });
+		
+        runtime.notify('submit', {
+            message: 'Submitting...',
+            state: 'start',
+        });
+
+        $.ajax(url, {
+            type: 'POST',
+            data: JSON.stringify({
+                // eslint-disable-next-line camelcase
+                student_answer: $element.find('#student_answer').val(),
+                student_comments: $element.find('#student_comments').val(),
+
                 // eslint-disable-next-line camelcase
                 can_record_response: $element.find('.messageCheckbox').prop('checked'),
             }),
@@ -112,11 +155,11 @@ function FreeTextResponseView(runtime, element) {
                 submissionReceivedMessage.text(response.submitted_message);
                 buttonSubmit.text(buttonSubmit[0].dataset.value);
                 userAlertMessage.text(response.user_alert);
-                buttonSave.addClass(response.nodisplay_class);
                 setClassForTextAreaParent(response.indicator_class);
                 displayResponsesIfAnswered(response);
 
-                $xblocksContainer.data(cachedAnswerId, $element.find('.student_answer').val());
+                $xblocksContainer.data(cachedAnswerId, $element.find('#student_answer').val());
+                $xblocksContainer.data(cachedCommentsId, $element.find('#student_comments').val());
                 $xblocksContainer.data(problemProgressId, response.problem_progress);
                 $xblocksContainer.data(usedAttemptsFeedbackId, response.used_attempts_feedback);
 
@@ -125,42 +168,6 @@ function FreeTextResponseView(runtime, element) {
                 });
             },
             error: function buttonSubmitOnError() {
-                runtime.notify('error', {});
-            },
-        });
-        return false;
-    });
-
-    buttonSave.on('click', function () {
-        buttonSave.text(buttonSave[0].dataset.checking);
-        runtime.notify('save', {
-            message: 'Saving...',
-            state: 'start',
-        });
-        $.ajax(urlSave, {
-            type: 'POST',
-            data: JSON.stringify({
-                // eslint-disable-next-line camelcase
-                student_answer: $element.find('.student_answer').val(),
-            }),
-            success: function buttonSaveOnSuccess(response) {
-                buttonSubmit.addClass(response.nodisplay_class);
-                buttonSave.addClass(response.nodisplay_class);
-                usedAttemptsFeedback.text(response.used_attempts_feedback);
-                problemProgress.text(response.problem_progress);
-                submissionReceivedMessage.text(response.submitted_message);
-                buttonSave.text(buttonSave[0].dataset.value);
-                userAlertMessage.text(response.user_alert);
-
-                $xblocksContainer.data(cachedAnswerId, $element.find('.student_answer').val());
-                $xblocksContainer.data(problemProgressId, response.problem_progress);
-                $xblocksContainer.data(usedAttemptsFeedbackId, response.used_attempts_feedback);
-
-                runtime.notify('save', {
-                    state: 'end',
-                });
-            },
-            error: function buttonSaveOnError() {
                 runtime.notify('error', {});
             },
         });
