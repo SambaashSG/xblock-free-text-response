@@ -30,11 +30,11 @@
   box-sizing: border-box;
   border-radius: 3px;
   border: 2px solid #e4e4e4;
-  min-width: 160px;
+  min-width: 300px;
 }
 
-.freetextresponse .user_input .student_answer:first-child {
-	margin-bottom: 20px;
+.freetextresponse .user_input #student_answer{
+	margin-bottom: 20px !important;
 }
 
 .freetextresponse .user_input.unanswered .student_answer {

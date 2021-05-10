@@ -62,7 +62,7 @@ class FreeTextResponseViewMixin(
         Returns the class of the correctness indicator element
         """
         result = 'unanswered'
-        if self.display_correctness and self._word_count_valid():
+        if self.display_correctness and self._word_count_valid() and self._word_count_valid_comments():
             if self._determine_credit() == Credit.zero:
                 result = 'incorrect'
             else:
@@ -86,7 +86,16 @@ class FreeTextResponseViewMixin(
         word_count = len(self.student_answer.split())
         result = self.max_word_count >= word_count >= self.min_word_count
         return result
-
+        
+    def _word_count_valid_comments(self):
+        """
+        Returns a boolean value indicating whether the current
+        word count of the user's comments is valid
+        """
+        word_count = len(self.student_comments.split())
+        result = self.max_word_count >= word_count >= 0
+        return result
+        
     def _determine_credit(self):
         #  Not a standard xlbock pylint disable.
         # This is a problem with pylint 'enums and R0204 in general'
@@ -176,19 +185,38 @@ class FreeTextResponseViewMixin(
 
     def _get_word_count_message(self):
         """
-        Returns the word count message
+        Returns the word count message for student_answers
         """
         result = self.ungettext(
-            "Your response must be "
+            "Your {description} must be "
             "between {min} and {max} word.",
-            "Your response must be "
+            "Your {description} must be "
             "between {min} and {max} words.",
             self.max_word_count,
         ).format(
             min=self.min_word_count,
             max=self.max_word_count,
+            description = self.description,
         )
         return result
+        
+    def _get_word_count_message_comments(self):
+        """
+        Returns the word count message for student_comments
+        """
+        result = self.ungettext(
+            "Your {description} must be "
+            "between {min} and {max} word.",
+            "Your {description} must be "
+            "between {min} and {max} words.",
+            self.max_word_count,
+        ).format(
+            min=0,
+            max=self.max_word_count,
+            description = self.comments,
+        )
+        return result
+    
 
     def get_other_answers(self):
         """
@@ -249,16 +277,20 @@ class FreeTextResponseViewMixin(
         Returns the invalid word count message
         """
         result = ''
-        if (
-                (ignore_attempts or self.count_attempts > 0) and
-                (not self._word_count_valid())
-        ):
+        if ((ignore_attempts or self.count_attempts > 0) and (not self._word_count_valid())):
             word_count_message = self._get_word_count_message()
-            description = self.description
             result = self.ugettext(
-                "{description} is required!"
+                "{word_count_message}"
             ).format(
-                description = description,
+                word_count_message=word_count_message,
+            )
+            
+        elif (not self._word_count_valid_comments()):
+            word_count_message = self._get_word_count_message_comments()
+            result = self.ugettext(
+                "{word_count_message}"
+            ).format(
+                word_count_message=word_count_message,
             )
         return result
 
@@ -267,7 +299,7 @@ class FreeTextResponseViewMixin(
         Returns the message to display in the submission-received div
         """
         result = ''
-        if self._word_count_valid():
+        if self._word_count_valid() and self._word_count_valid_comments():
             result = self.submitted_message
         return result
 
@@ -277,7 +309,7 @@ class FreeTextResponseViewMixin(
         depending on the student answer
         """
         result = ''
-        if not self._word_count_valid():
+        if not self._word_count_valid() or not self._word_count_valid_comments():
             result = self._get_invalid_word_count_message(ignore_attempts)
         return result
 
