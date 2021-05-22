@@ -188,9 +188,9 @@ class FreeTextResponseViewMixin(
         Returns the word count message for student_answers
         """
         result = self.ungettext(
-            "Your \"{description}\" must be "
+            "Your {description} must be "
             "between {min} and {max} word.",
-            "Your \"{description}\" must be "
+            "Your {description} must be "
             "between {min} and {max} words.",
             self.max_word_count,
         ).format(
@@ -205,9 +205,9 @@ class FreeTextResponseViewMixin(
         Returns the word count message for student_comments
         """
         result = self.ungettext(
-            "Your \"{description}\" must be "
+            "Your {description} must be "
             "between {min} and {max} word.",
-            "Your \"{description}\" must be "
+            "Your {description} must be "
             "between {min} and {max} words.",
             self.max_word_count,
         ).format(
