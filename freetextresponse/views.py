@@ -189,7 +189,10 @@ class FreeTextResponseViewMixin(
         """
         result = self.ungettext(
             "Your \"{description}\" must be "
-            "between {min} and {max} word."
+            "between {min} and {max} word.",
+            "Your \"{description}\" must be "
+            "between {min} and {max} words.",
+            self.max_word_count,
         ).format(
             min=self.min_word_count,
             max=self.max_word_count,
@@ -203,7 +206,10 @@ class FreeTextResponseViewMixin(
         """
         result = self.ungettext(
             "Your \"{description}\" must be "
-            "between {min} and {max} word."
+            "between {min} and {max} word.",
+            "Your \"{description}\" must be "
+            "between {min} and {max} words.",
+            self.max_word_count,
         ).format(
             min=0,
             max=self.max_word_count,
