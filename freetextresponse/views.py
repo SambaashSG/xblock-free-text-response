@@ -78,6 +78,15 @@ class FreeTextResponseViewMixin(
             result = 'nodisplay'
         return result
 
+    def _word_count_valid_min(self):
+        """
+        Returns a boolean value indicating whether the current
+        word count of the user's answer is empty or not
+        """
+        word_count = len(self.student_answer.split())
+        result = word_count >= self.min_word_count
+        return result
+    
     def _word_count_valid(self):
         """
         Returns a boolean value indicating whether the current
@@ -277,7 +286,15 @@ class FreeTextResponseViewMixin(
         Returns the invalid word count message
         """
         result = ''
-        if ((ignore_attempts or self.count_attempts > 0) and (not self._word_count_valid())):
+        if (not self._word_count_valid_min()):
+            word_count_message = "Please provide your response to the 1st question"
+            result = self.ugettext(
+                "{word_count_message}"
+            ).format(
+                word_count_message=word_count_message,
+            )
+            
+        elif(not self._word_count_valid()):
             word_count_message = self._get_word_count_message()
             result = self.ugettext(
                 "{word_count_message}"
