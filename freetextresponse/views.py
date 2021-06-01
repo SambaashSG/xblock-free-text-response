@@ -38,7 +38,10 @@ class FreeTextResponseViewMixin(
         context = dict(context)
         context.update({
             'comments': self.comments,
+            'comments_upperlimit': self.comments_upperlimit,
             'display_name': self.display_name,
+            'description_required': self.description_required,
+            'description_upperlimit': self.description_upperlimit,
             'description': self.description,
             'indicator_class': self._get_indicator_class(),
             'nodisplay_class': self._get_nodisplay_class(),
@@ -287,7 +290,7 @@ class FreeTextResponseViewMixin(
         """
         result = ''
         if (not self._word_count_valid_min()):
-            word_count_message = "Please provide your response to the 1st question"
+            word_count_message = self.description_required
             result = self.ugettext(
                 "{word_count_message}"
             ).format(
@@ -295,7 +298,7 @@ class FreeTextResponseViewMixin(
             )
             
         elif(not self._word_count_valid()):
-            word_count_message = self._get_word_count_message()
+            word_count_message = self.description_upperlimit
             result = self.ugettext(
                 "{word_count_message}"
             ).format(
@@ -303,7 +306,7 @@ class FreeTextResponseViewMixin(
             )
             
         elif (not self._word_count_valid_comments()):
-            word_count_message = self._get_word_count_message_comments()
+            word_count_message = self.comments_upperlimit
             result = self.ugettext(
                 "{word_count_message}"
             ).format(

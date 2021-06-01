@@ -25,7 +25,10 @@ class FreeTextResponseModelMixin(object):
     editable_fields = [
         'display_name',
         'description',
+        'description_required',
+        'description_upperlimit',
         'comments',
+        'comments_upperlimit',
         'prompt',
         'weight',
         'max_attempts',
@@ -79,12 +82,36 @@ class FreeTextResponseModelMixin(object):
         default='Description',
         scope=Scope.settings,
     )
+    description_required = String(
+        display_name=_('Description Required Message'),
+        help=_(
+            'This is the validation message for description when required'
+        ),
+        default='Description is required',
+        scope=Scope.settings,
+    )
+    description_upperlimit = String(
+        display_name=_('Description Upper Limit Message'),
+        help=_(
+            'This is the validation message for description when over the word count limit'
+        ),
+        default='Description has too much words',
+        scope=Scope.settings,
+    )
     comments = String(
         display_name=_('Comments'),
         help=_(
             'This is the title for this question type'
         ),
         default='Comments',
+        scope=Scope.settings,
+    )
+    comments_upperlimit = String(
+        display_name=_('Comments Upper Limit MEssage'),
+        help=_(
+            'This is the validation message for comments when over the word count limit'
+        ),
+        default='Comments has too much words',
         scope=Scope.settings,
     )
     fullcredit_keyphrases = List(
