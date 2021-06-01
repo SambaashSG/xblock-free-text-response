@@ -87,7 +87,7 @@ class FreeTextResponseModelMixin(object):
         help=_(
             'This is the validation message for description when required'
         ),
-        default='Description is required',
+        default='The description is required',
         scope=Scope.settings,
     )
     description_upperlimit = String(
@@ -95,7 +95,7 @@ class FreeTextResponseModelMixin(object):
         help=_(
             'This is the validation message for description when over the word count limit'
         ),
-        default='Description has too much words',
+        default='The description has too many words',
         scope=Scope.settings,
     )
     comments = String(
@@ -111,7 +111,7 @@ class FreeTextResponseModelMixin(object):
         help=_(
             'This is the validation message for comments when over the word count limit'
         ),
-        default='Comments has too much words',
+        default='The comments have too many words',
         scope=Scope.settings,
     )
     fullcredit_keyphrases = List(
