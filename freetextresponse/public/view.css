@@ -180,3 +180,8 @@
 .freetextresponse div:empty {
   display: none;
 }
+
+.freetextresponse .word-container{
+	display: flex;
+	justify-content: space-between;
+}

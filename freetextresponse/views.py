@@ -37,6 +37,7 @@ class FreeTextResponseViewMixin(
         context = context or {}
         context = dict(context)
         context.update({
+            'max_word_count': self.max_word_count,
             'comments': self.comments,
             'comments_upperlimit': self.comments_upperlimit,
             'display_name': self.display_name,
