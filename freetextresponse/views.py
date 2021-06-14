@@ -255,28 +255,13 @@ class FreeTextResponseViewMixin(
         """
         result = ''
         if (not self._word_count_valid_min()):
-            word_count_message = self.description_required
-            result = self.ugettext(
-                "{word_count_message}"
-            ).format(
-                word_count_message=word_count_message,
-            )
+            result = self.description_required
             
         elif(not self._word_count_valid()):
-            word_count_message = self.description_upperlimit
-            result = self.ugettext(
-                "{word_count_message}"
-            ).format(
-                word_count_message=word_count_message,
-            )
-            
+            result = self.description_upperlimit
+                        
         elif (not self._word_count_valid_comments()):
-            word_count_message = self.comments_upperlimit
-            result = self.ugettext(
-                "{word_count_message}"
-            ).format(
-                word_count_message=word_count_message,
-            )
+            result = self.comments_upperlimit
         return result
 
     def _get_submitted_message(self):
