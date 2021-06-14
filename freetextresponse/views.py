@@ -53,7 +53,6 @@ class FreeTextResponseViewMixin(
             'is_past_due': self.is_past_due(),
             'used_attempts_feedback': self._get_used_attempts_feedback(),
             'visibility_class': self._get_indicator_visibility_class(),
-            'word_count_message': self._get_word_count_message(),
             'display_other_responses': self.display_other_student_responses,
             'other_responses': self.get_other_answers(),
             'user_alert': '',
@@ -195,41 +194,6 @@ class FreeTextResponseViewMixin(
         else:
             result = 'hidden'
         return result
-
-    def _get_word_count_message(self):
-        """
-        Returns the word count message for student_answers
-        """
-        result = self.ungettext(
-            'Your \"{description}\" must be '
-            'between {min} and {max} word.',
-            'Your \"{description}\" must be '
-            'between {min} and {max} words.',
-            self.max_word_count,
-        ).format(
-            min=self.min_word_count,
-            max=self.max_word_count,
-            description = self.description,
-        )
-        return result
-        
-    def _get_word_count_message_comments(self):
-        """
-        Returns the word count message for student_comments
-        """
-        result = self.ungettext(
-            'Your \"{description}\" must be '
-            'between {min} and {max} word.',
-            'Your \"{description}\" must be '
-            'between {min} and {max} words.',
-            self.max_word_count,
-        ).format(
-            min=0,
-            max=self.max_word_count,
-            description = self.comments,
-        )
-        return result
-    
 
     def get_other_answers(self):
         """
