@@ -33,7 +33,7 @@
   min-width: 300px;
 }
 
-.freetextresponse .user_input #student_answer{
+.freetextresponse .user_input .word-container:first-child{
 	margin-bottom: 20px !important;
 }
 
