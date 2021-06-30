@@ -107,7 +107,7 @@ class FreeTextResponseModelMixin(object):
         scope=Scope.settings,
     )
     comments_upperlimit = String(
-        display_name=_('Comments Upper Limit MEssage'),
+        display_name=_('Comments Upper Limit Message'),
         help=_(
             'This is the validation message for comments when over the word count limit'
         ),
