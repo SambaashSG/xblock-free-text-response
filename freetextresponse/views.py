@@ -143,29 +143,12 @@ class FreeTextResponseViewMixin(
         if self.weight == 0:
             result = ''
         elif self.score == 0.0:
-            result = "({})".format(
-                self.ungettext(
-                    "{weight} point possible",
-                    "{weight} points possible",
-                    self.weight,
-                ).format(
-                    weight=self.weight,
-                )
-            )
+            result = f"{self.weight} point possible"
         else:
             scaled_score = self.score * self.weight
             # No trailing zero and no scientific notation
             score_string = ('%.15f' % scaled_score).rstrip('0').rstrip('.')
-            result = "({})".format(
-                self.ungettext(
-                    "{score_string}/{weight} point",
-                    "{score_string}/{weight} points",
-                    self.weight,
-                ).format(
-                    score_string=score_string,
-                    weight=self.weight,
-                )
-            )
+            result = f"{score_string}/{self.weight} point"
         return result
 
     def _get_used_attempts_feedback(self):
@@ -175,14 +158,7 @@ class FreeTextResponseViewMixin(
         """
         result = ''
         if self.max_attempts > 0:
-            result = self.ungettext(
-                'You have used {count_attempts} of {max_attempts} submission',
-                'You have used {count_attempts} of {max_attempts} submissions',
-                self.max_attempts,
-            ).format(
-                count_attempts=self.count_attempts,
-                max_attempts=self.max_attempts,
-            )
+            result = f"You have used {self.count_attempts} of {self.max_attempts} submission"
         return result
 
     def _get_indicator_visibility_class(self):
